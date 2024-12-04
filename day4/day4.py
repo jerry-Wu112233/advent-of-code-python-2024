@@ -1,6 +1,6 @@
 import re
 
-from itertools import starmap
+from itertools import starmap, product
 from typing import Tuple
 
 
@@ -80,20 +80,22 @@ def part_2(file_path_to_input: str) -> int:
 def _get_coords_in_all_dir(
     current_x: int, current_y: int, increment_total: int
 ) -> Tuple[list[list[Tuple[int, int]]], list[list[Tuple[int, int]]]]:
-    directions = [(dx, dy) for dx in [-1, 0, 1] for dy in [-1, 0, 1]]
+    directions = set(product((-1, 0, 1), (-1, 0, 1))) - {(0, 0)}
     search_results = []
     reference_block = []
     for x_dir, y_dir in directions:
-        search_coord = []
-        ref_coord = []
-        for increment in range(increment_total):
-            x_prime = current_x + x_dir * increment
-            y_prime = current_y + y_dir * increment
-            search_coord.append((x_prime, y_prime))
-            ref_coord.append((1 + x_dir * increment, 1 + y_dir * increment))
-
-        search_results.append(search_coord)
-        reference_block.append(ref_coord)
+        search_results.append(
+            [
+                (current_x + x_dir * increment, current_y + y_dir * increment)
+                for increment in range(increment_total)
+            ]
+        )
+        reference_block.append(
+            [
+                (1 + x_dir * increment, 1 + y_dir * increment)
+                for increment in range(increment_total)
+            ]
+        )
     return search_results, reference_block
 
 
