@@ -33,15 +33,15 @@ def part_2() -> int:
     median_sum = 0
     for order in ordering:
         n = len(order)
-        if _check_page_order(order):
-            continue
         order_set = set(order)
         G = _make_graph_with_some_nodes(order)
         topological_sort = list(nx.topological_sort(G))
         filtered_topological_sort = [
             node for node in topological_sort if node in order_set
         ]
-        median_sum += filtered_topological_sort[(n - 1) // 2]
+
+        if filtered_topological_sort != order:
+            median_sum += filtered_topological_sort[(n - 1) // 2]
     return median_sum
 
 
@@ -56,7 +56,6 @@ def _check_page_order(order: list[int]) -> bool:
         topological_sort_map[order[i]] > topological_sort_map[order[i - 1]]
         for i in range(1, n)
     )
-
 
 
 def _make_graph_with_some_nodes(subset_of_nodes: list[int]):
