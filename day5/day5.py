@@ -20,16 +20,6 @@ for line in ls:
         ordering.append([int(n) for n in line.split(",")])
 
 
-def _make_graph_with_some_nodes(subset_of_nodes: list[int]):
-    G = nx.DiGraph()
-    node_set = set(subset_of_nodes)
-    for edge in edges:
-        v1, v2 = edge
-        if v1 in node_set and v2 in node_set:
-            G.add_edge(v1, v2)
-    return G
-
-
 def part_1() -> int:
     median_sum = 0
     for order in ordering:
@@ -66,3 +56,14 @@ def _check_page_order(order: list[int]) -> bool:
         topological_sort_map[order[i]] > topological_sort_map[order[i - 1]]
         for i in range(1, n)
     )
+
+
+
+def _make_graph_with_some_nodes(subset_of_nodes: list[int]):
+    G = nx.DiGraph()
+    node_set = set(subset_of_nodes)
+    for edge in edges:
+        v1, v2 = edge
+        if v1 in node_set and v2 in node_set:
+            G.add_edge(v1, v2)
+    return G
