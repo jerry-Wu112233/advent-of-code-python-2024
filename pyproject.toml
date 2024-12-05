@@ -7,7 +7,7 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"  # Replace with your Python version
+python = "^3.10"  # Replace with your Python version
 networkx = "^3.0"
 ruff = "^0.49"
 
