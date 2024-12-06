@@ -6,6 +6,8 @@ grid_x_dimension = 0
 grid_y_dimension = 0
 stops = set()
 
+OUT_OF_BOUND_TUPLE = (-1, -1, 0, 0)
+
 with open("day6/input.txt", "r") as f:
     for i, line in enumerate(f):
         grid_x_dimension += 1
@@ -42,7 +44,7 @@ def _simulate_walk(extra_stop: Tuple[int, int] = (-1, -1)) -> int:
     pos_and_direction = (initial_pos[0], initial_pos[1], -1, 0)
     visited_path = set()
     visited_coords_and_dir = set()
-    while pos_and_direction != (-1, -1, 0, 0):
+    while pos_and_direction != OUT_OF_BOUND_TUPLE:
         visited_path.add((pos_and_direction[0], pos_and_direction[1]))
         if pos_and_direction in visited_coords_and_dir:
             return 0
@@ -61,7 +63,7 @@ def _look_ahead(
     next_x = curr_i + x_direction
     next_y = curr_j + y_direction
     if _out_of_bound(next_x, next_y):
-        return (-1, -1, 0, 0)
+        return OUT_OF_BOUND_TUPLE
 
     if (next_x, next_y) not in stops and (next_x, next_y) != extra_stop:
         return (next_x, next_y, x_direction, y_direction)
