@@ -35,7 +35,7 @@ def part_2() -> int:
         ]
 
         for future in as_completed(futures):
-            if future.result() == 0:
+            if future.result() == float("inf"):
                 obstructions_that_cause_cycle += 1
     return obstructions_that_cause_cycle
 
@@ -47,7 +47,7 @@ def _simulate_walk(extra_stop: Tuple[int, int] = (-1, -1)) -> int:
     while pos_and_direction != OUT_OF_BOUND_TUPLE:
         visited_path.add((pos_and_direction[0], pos_and_direction[1]))
         if pos_and_direction in visited_coords_and_dir:
-            return 0
+            return float("inf")
         visited_coords_and_dir.add(pos_and_direction)
         pos_and_direction = _look_ahead(pos_and_direction, extra_stop)
 
@@ -67,8 +67,8 @@ def _look_ahead(
 
     if (next_x, next_y) not in stops and (next_x, next_y) != extra_stop:
         return (next_x, next_y, x_direction, y_direction)
-
-    new_direction = (y_direction, -x_direction)
+    
+    new_direction = (y_direction, -x_direction) # rotates the direction by pi / 2 radians clockwise
 
     return (curr_i, curr_j) + new_direction
 
