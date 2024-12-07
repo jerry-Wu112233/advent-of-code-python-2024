@@ -67,8 +67,11 @@ def _look_ahead(
 
     if (next_x, next_y) not in stops and (next_x, next_y) != extra_stop:
         return (next_x, next_y, x_direction, y_direction)
-    
-    new_direction = (y_direction, -x_direction) # rotates the direction by pi / 2 radians clockwise
+
+    new_direction = (
+        y_direction,
+        -x_direction,
+    )  # rotates the direction by pi / 2 radians clockwise
 
     return (curr_i, curr_j) + new_direction
 
