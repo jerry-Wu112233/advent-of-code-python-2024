@@ -1,5 +1,4 @@
-from typing import Tuple
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor
 
 initial_pos = (0, 0)
 grid_x_dimension = 0
@@ -26,21 +25,20 @@ def part_1() -> int:
 
 def part_2() -> int:
     obstructions_that_cause_cycle = 0
-    with ThreadPoolExecutor() as executor:
-        futures = [
-            executor.submit(_simulate_walk, (i, j))
+    with ProcessPoolExecutor() as executor:
+        extra_stops = [
+            (i, j)
             for i in range(grid_x_dimension)
             for j in range(grid_y_dimension)
             if (i, j) not in stops and (i, j) != initial_pos
         ]
-
-        for future in as_completed(futures):
-            if future.result() == float("inf"):
-                obstructions_that_cause_cycle += 1
+        results = executor.map(_simulate_walk, extra_stops)
+        for path_length in results:
+            obstructions_that_cause_cycle += 1 if path_length == 0 else 0
     return obstructions_that_cause_cycle
 
 
-def _simulate_walk(extra_stop: Tuple[int, int] = (-1, -1)) -> int:
+def _simulate_walk(extra_stop: tuple[int, int] = (-1, -1)) -> int:
     pos_and_direction = (initial_pos[0], initial_pos[1], -1, 0)
     visited_path = set()
     visited_coords_and_dir = set()
@@ -55,8 +53,8 @@ def _simulate_walk(extra_stop: Tuple[int, int] = (-1, -1)) -> int:
 
 
 def _look_ahead(
-    pos_and_direction: Tuple[int, int, int, int], extra_stop: Tuple[int, int]
-) -> Tuple[int, int, int, int]:
+    pos_and_direction: tuple[int, int, int, int], extra_stop: tuple[int, int]
+) -> tuple[int, int, int, int]:
     # returns a tuple containing next coordinate to walk to along with
     # tuple describing next direction
     curr_i, curr_j, x_direction, y_direction = pos_and_direction
@@ -78,3 +76,5 @@ def _look_ahead(
 
 def _out_of_bound(i: int, j: int) -> bool:
     return not (0 <= i < grid_x_dimension and 0 <= j < grid_y_dimension)
+
+print(part_2())
