@@ -1,4 +1,5 @@
 from concurrent.futures import ProcessPoolExecutor
+from numbers import Number
 
 initial_pos = (0, 0)
 grid_x_dimension = 0
@@ -38,7 +39,7 @@ def part_2() -> int:
     return obstructions_that_cause_cycle
 
 
-def _simulate_walk(extra_stop: tuple[int, int] = (-1, -1)) -> int:
+def _simulate_walk(extra_stop: tuple[int, int] = (-1, -1)) -> Number.Number:
     pos_and_direction = (initial_pos[0], initial_pos[1], -1, 0)
     visited_path = set()
     visited_coords_and_dir = set()
@@ -76,5 +77,6 @@ def _look_ahead(
 
 def _out_of_bound(i: int, j: int) -> bool:
     return not (0 <= i < grid_x_dimension and 0 <= j < grid_y_dimension)
+
 
 print(part_2())

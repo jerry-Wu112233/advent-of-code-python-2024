@@ -9,7 +9,8 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"  # Replace with your Python version
 networkx = "^3.0"
-ruff = "^4.0"
+ruff = "^0.1"
+numpy = "^2.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.0"
