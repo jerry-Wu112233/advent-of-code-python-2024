@@ -1,7 +1,7 @@
 from typing import Iterator
 import numpy as np
 from collections import defaultdict
-from itertools import chain, combinations
+from itertools import chain, permutations
 
 
 char_map = defaultdict(list)
@@ -25,7 +25,7 @@ def part_1() -> int:
         set(
             coord
             for c in char_map
-            for coord_1, coord_2 in combinations(char_map[c], 2)
+            for coord_1, coord_2 in permutations(char_map[c], 2)
             for coord in _find_antinodes(coord_1, coord_2, 1)
         )
     )
@@ -36,7 +36,7 @@ def part_2() -> int:
         set(
             coord
             for c in char_map
-            for coord_1, coord_2 in combinations(char_map[c], 2)
+            for coord_1, coord_2 in permutations(char_map[c], 2)
             for coord in [coord_1, coord_2]
             + [node for node in _find_antinodes(coord_1, coord_2, float("inf"))]
         )
@@ -44,20 +44,15 @@ def part_2() -> int:
 
 
 def _find_antinodes(
-    coordinate_1: tuple[int, int], coordinate_2: tuple[int, int], extensions: np.number
+    coord_1: tuple[int, int], coord_2: tuple[int, int], extensions: np.number
 ) -> Iterator[tuple[int, int]]:
-    top_left_most_coord = coordinate_1 if coordinate_1 < coordinate_2 else coordinate_2
-    bot_right_most_coord = (
-        coordinate_1 if top_left_most_coord == coordinate_2 else coordinate_2
-    )
     dx, dy = (
-        bot_right_most_coord[0] - top_left_most_coord[0],
-        bot_right_most_coord[1] - top_left_most_coord[1],
+        coord_2[0] - coord_1[0],
+        coord_2[1] - coord_1[1],
     )
-
     return chain(
-        _generate_next_point(top_left_most_coord, (-dx, -dy), extensions),
-        _generate_next_point(bot_right_most_coord, (dx, dy), extensions),
+        _generate_next_point(coord_1, (-dx, -dy), extensions),
+        _generate_next_point(coord_2, (dx, dy), extensions),
     )
 
 
