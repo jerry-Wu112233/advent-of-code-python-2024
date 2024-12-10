@@ -1,5 +1,5 @@
 from typing import Iterator
-import numpy as np
+import numbers
 from collections import defaultdict
 from itertools import chain, permutations
 
@@ -37,14 +37,17 @@ def part_2() -> int:
             coord
             for c in char_map
             for coord_1, coord_2 in permutations(char_map[c], 2)
-            for coord in [coord_1, coord_2]
-            + [node for node in _find_antinodes(coord_1, coord_2, float("inf"))]
+            for coord in chain(
+                [coord_1, coord_2], [node for node in _find_antinodes(coord_1, coord_2)]
+            )
         )
     )
 
 
 def _find_antinodes(
-    coord_1: tuple[int, int], coord_2: tuple[int, int], extensions: np.number
+    coord_1: tuple[int, int],
+    coord_2: tuple[int, int],
+    extensions: numbers.Number = float("inf"),
 ) -> Iterator[tuple[int, int]]:
     dx, dy = (
         coord_2[0] - coord_1[0],
@@ -57,7 +60,7 @@ def _find_antinodes(
 
 
 def _generate_next_point(
-    curr_coord: tuple[int, int], direction: tuple[int, int], iterations: np.number
+    curr_coord: tuple[int, int], direction: tuple[int, int], iterations: numbers.Number
 ) -> Iterator[tuple[int, int]]:
     t = 1
     while t <= iterations:
