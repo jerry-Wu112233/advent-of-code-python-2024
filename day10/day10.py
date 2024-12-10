@@ -1,15 +1,7 @@
-from collections import deque
+with open("day10/input.txt") as f:
+    ls = f.read().strip().split("\n")
 
-board = dict()
-
-
-with open("day10/input.txt", "r") as f:
-    for row, line in enumerate(f):
-        for col, val in enumerate(line.rstrip("\n")):
-            try:
-                board |= {row + 1j * col: int(val)}
-            except ValueError as ve:
-                board |= {row + 1j * col: float("inf")}
+board = {row + 1j * col: int(x) for row, l in enumerate(ls) for col, x in enumerate(l)}
 
 
 def part_1() -> int:
@@ -22,11 +14,10 @@ def part_2() -> int:
 
 def _explore(current_pos: complex) -> list[complex]:
     directions = [1 + 0j, -1 + 0j, 0 + -1j, 0 + 1j]
-    queue = deque()
-    queue.append(current_pos)
+    to_visit = [current_pos]
     zeniths = []
-    while queue:
-        position = queue.popleft()
+    while to_visit:
+        position = to_visit.pop()
         if board[position] == 9:
             zeniths.append(position)
             continue
@@ -36,5 +27,5 @@ def _explore(current_pos: complex) -> list[complex]:
                 continue
             if board[new_coord] != board[position] + 1:
                 continue
-            queue.append(new_coord)
+            to_visit.append(new_coord)
     return zeniths

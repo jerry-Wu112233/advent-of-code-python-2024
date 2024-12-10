@@ -29,11 +29,10 @@ def part_1() -> int:
 def part_2() -> int:
     file_blocks = _disk_map_to_file_blocks()
     condensed_repr_of_blocks = _groupby_with_indices(file_blocks)
-    space_info_arr = [t for t in condensed_repr_of_blocks if t.val == "."]
     for block in reversed(condensed_repr_of_blocks):
         if block.val == ".":
             continue
-        for space_block in space_info_arr:
+        for space_block in filter(lambda t: t.val == ".", condensed_repr_of_blocks):
             if space_block.start > block.start:
                 break
             if space_block.length < block.length:
