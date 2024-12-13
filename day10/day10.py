@@ -1,7 +1,11 @@
 with open("day10/input.txt") as f:
     ls = f.read().strip().split("\n")
 
-board = {row + 1j * col: int(val) for row, line in enumerate(ls) for col, val in enumerate(line)}
+board = {
+    row + 1j * col: int(val)
+    for row, line in enumerate(ls)
+    for col, val in enumerate(line)
+}
 
 
 def part_1() -> int:
