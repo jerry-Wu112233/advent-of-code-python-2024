@@ -15,8 +15,8 @@ with open("day18/input.txt", "r") as f:
 G = nx.Graph()
 
 directions = [-1, 1, -1j, 1j]
-for row in range(71):
-    for col in range(71):
+for row in range(width):
+    for col in range(height):
         pos = complex(row, col)
         if pos in obstacles:
             continue
@@ -28,8 +28,12 @@ for row in range(71):
                 continue
             G.add_edge(pos, neighbor)
 
+
 def part_1() -> int:
-    return nx.shortest_path_length(G, source=complex(0,0), target=complex(70,70))
+    return nx.shortest_path_length(
+        G, source=complex(0, 0), target=complex(width - 1, height - 1)
+    )
+
 
 def part_2() -> tuple[int, int]:
     for obstacle in coords_after_1024:
@@ -41,7 +45,9 @@ def part_2() -> tuple[int, int]:
                 continue
             obstacles.add(obstacle)
         try:
-            nx.shortest_path_length(G, source=complex(0, 0), target=complex(70,70))
+            nx.shortest_path_length(
+                G, source=complex(0, 0), target=complex(width - 1, height - 1)
+            )
         except nx.NetworkXNoPath:
             return obstacle.imag, obstacle.real
     return 0, 0
