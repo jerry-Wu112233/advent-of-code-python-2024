@@ -8,9 +8,7 @@ with open("day11/input.txt") as f:
 
 
 def part_1() -> int:
-    for i in range(1, 10):
-        print(_simulate(i))
-    return _simulate(26)
+    return _simulate(25)
 
 
 def part_2() -> int:

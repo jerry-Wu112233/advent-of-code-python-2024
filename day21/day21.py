@@ -1,4 +1,5 @@
 from functools import lru_cache
+from itertools import pairwise
 import networkx as nx
 
 with open("day21/input.txt", "r") as f:
@@ -26,22 +27,23 @@ directional_map = {"^": (0, 1), "A": (0, 2), "<": (1, 0), "v": (1, 1), ">": (1, 
 
 
 def part_1() -> int:
+    return _compute_cost_with_n_directional_layers(2)
+
+
+def part_2() -> int:
+    return _compute_cost_with_n_directional_layers(25)
+
+
+def _compute_cost_with_n_directional_layers(directional_layers: int) -> int:
     result = 0
     for seq in inputs:
         num_part = int(seq[:-1])
         key_pad_directions = _find_actions_for_keypad_seq(seq)
-
-        first_directional_pad_seqs = []
-        for key_pad_direction in key_pad_directions:
-            first_directional_pad_seqs.extend(
-                _find_actions_for_directional_seq(key_pad_direction)
+        min_direction_length = float("inf")
+        for direction in key_pad_directions:
+            min_direction_length = min(
+                min_direction_length, _find_num_of_paths(direction, directional_layers)
             )
-
-        min_direction_length = min(
-            len(dir)
-            for directional_seq in first_directional_pad_seqs
-            for dir in _find_actions_for_directional_seq(directional_seq)
-        )
         result += num_part * min_direction_length
     return result
 
@@ -60,11 +62,6 @@ def _map_nodes_to_direction(node_1: tuple[int, int], node_2: tuple[int, int]) ->
     return ""
 
 
-@lru_cache
-def _find_actions_for_directional_seq(directional_seq: str) -> str:
-    return _find_actions(directional_pad, directional_seq, directional_map)
-
-
 def _find_actions_for_keypad_seq(keypad_seq: str) -> str:
     return _find_actions(keypad_graph, keypad_seq, keypad_map)
 
@@ -79,7 +76,7 @@ def _find_actions(graph: nx.Graph, sequence: str, map_to_use: map) -> list[str]:
         new_actions = []
         for path in paths:
             directions = ""
-            for coord_1, coord_2 in zip(path, path[1:]):
+            for coord_1, coord_2 in pairwise(path):
                 for direction in _map_nodes_to_direction(coord_1, coord_2):
                     directions += direction
             directions += "A"
@@ -90,12 +87,32 @@ def _find_actions(graph: nx.Graph, sequence: str, map_to_use: map) -> list[str]:
     return actions
 
 
-actions = _find_actions(directional_pad, "<A^A>^^AvvvA", directional_map)
-diff_count = set()
-print(f"number of actions: {len(actions)}")
-for i, action in enumerate(actions):
-    next_level = _find_actions_for_directional_seq(action)
-    for _, level in enumerate(next_level):
-        diff_count.add((i, len(level)))
+@lru_cache
+def _find_num_of_paths(path: str, robot_level: int) -> int:
+    if robot_level == 0:
+        return len(path)
+    return sum(
+        min(
+            _find_num_of_paths(new_path + "A", robot_level - 1)
+            for new_path in _get_all_paths(from_symbol, to_symbol)
+        )
+        for from_symbol, to_symbol in pairwise("A" + path)
+    )
 
-print(diff_count)
+
+@lru_cache
+def _get_all_paths(from_symbol: str, to_symbol: str, map_to_use: dict=directional_map) -> int:
+    from_symbol_coord = map_to_use[from_symbol]
+    to_symbol_coord = map_to_use[to_symbol]
+    raw_paths = nx.all_shortest_paths(
+        directional_pad, from_symbol_coord, to_symbol_coord
+    )
+
+    all_directions = []
+    for path in raw_paths:
+        directions = ""
+        for coord_1, coord_2 in pairwise(path):
+            for direction in _map_nodes_to_direction(coord_1, coord_2):
+                directions += direction
+        all_directions.append(directions)
+    return all_directions
